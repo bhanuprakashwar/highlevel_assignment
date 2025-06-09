@@ -1,6 +1,5 @@
 <template>
   <header></header>
-
   <main class="mainClass">
     <SpacingComponent @spacingDetails="logSpacingValues" />
   </main>
