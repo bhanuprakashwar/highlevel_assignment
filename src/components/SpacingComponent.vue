@@ -5,38 +5,50 @@
         <!-- Top Row -->
         <div></div>
         <div>
-          <SpacingDropdown />
+          <SpacingDropdown :value="margins.top" side="top" @updateMargins="handleMarginUpdate" />
         </div>
         <div></div>
 
         <!-- Center Row -->
         <div>
-          <SpacingDropdown />
+          <SpacingDropdown :value="margins.left" side="left" @updateMargins="handleMarginUpdate" />
         </div>
         <div class="padding-box">
           <div class="grid-3x3 padding-grid">
             <div></div>
-            <SpacingDropdown />
+            <SpacingDropdown
+              :value="paddings.top"
+              side="top"
+              @updateMargins="handlePaddingUpdate"
+            />
             <div></div>
 
-            <SpacingDropdown />
+            <SpacingDropdown :value="paddings.left" side="left" />
             <div class="input-wrapper"></div>
-            <SpacingDropdown />
+            <SpacingDropdown :value="paddings.right" side="right" />
 
             <div></div>
-            <SpacingDropdown />
+            <SpacingDropdown :value="paddings.bottom" side="bottom" />
             <div></div>
           </div>
           <div class="padding-label">Paddings</div>
         </div>
         <div>
-          <SpacingDropdown />
+          <SpacingDropdown
+            :value="margins.right"
+            side="right"
+            @updateMargins="handleMarginUpdate"
+          />
         </div>
 
         <!-- Bottom Row -->
         <div></div>
         <div>
-          <SpacingDropdown />
+          <SpacingDropdown
+            :value="margins.bottom"
+            side="bottom"
+            @updateMargins="handleMarginUpdate"
+          />
         </div>
         <div></div>
       </div>
@@ -47,6 +59,12 @@
 
 <script setup lang="ts">
 import SpacingDropdown from './SpacingDropdown.vue'
+import {
+  margins,
+  paddings,
+  handleMarginUpdate,
+  handlePaddingUpdate,
+} from '../shared/spacingBusLogic'
 </script>
 
 <style scoped>
