@@ -7,7 +7,6 @@
         :placeholder="value ? '' : '0px'"
         v-model="inputValue"
         @keydown.enter.prevent="handleManualInput"
-        @blur="handleManualInput"
       />
       <font-awesome-icon icon="chevron-down" size="xs" class="chevron" @click="toggleDropdown" />
       <div v-if="show" class="dropdown-list">
@@ -33,9 +32,14 @@ const props = defineProps({
   },
   side: {
     type: String,
+    required: true,
+  },
+  type: {
+    type: String,
+    required: true,
   },
 })
-const emit = defineEmits(['updateMargins'])
+const emit = defineEmits(['updateSpacing'])
 const dropdownRef = ref<HTMLElement | null>(null)
 const show = ref(false)
 const inputValue = ref(props.value)
@@ -69,8 +73,9 @@ const options = [
   },
 ]
 const selectOption = (option: { label: string; value: string }) => {
-  emit('updateMargins', {
+  emit('updateSpacing', {
     side: props.side,
+    type: props.type,
     selectedOption: option,
     currentValue: inputValue.value,
   })
@@ -89,17 +94,19 @@ function isValidCSSValue(property: string, value: string): boolean {
 }
 const handleManualInput = () => {
   const trimmed = inputValue.value.trim()
-
-  if (isValidCSSValue('margin', trimmed)) {
-    emit('updateMargins', {
+  const cssProperty = props.type === 'margin' ? 'margin' : 'padding'
+  if (isValidCSSValue(cssProperty, trimmed)) {
+    emit('updateSpacing', {
       side: props.side,
+      type: props.type,
       selectedOption: { label: 'Manual input', value: trimmed },
       currentValue: trimmed,
     })
   } else {
     inputValue.value = ''
-    emit('updateMargins', {
+    emit('updateSpacing', {
       side: props.side,
+      type: props.type,
       selectedOption: { label: 'Unset', value: 'unsetCurrent' },
       currentValue: '',
     })

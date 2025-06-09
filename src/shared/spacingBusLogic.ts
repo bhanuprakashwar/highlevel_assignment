@@ -1,6 +1,5 @@
 import { ref } from 'vue'
-
-type BoxSide = 'top' | 'right' | 'bottom' | 'left'
+import type { SpacingEmitPayload, UpdatePayload } from './spacingTypes'
 
 export const margins = ref({
   left: 'auto',
@@ -16,45 +15,81 @@ export const paddings = ref({
   bottom: '20px',
 })
 
-export const handleMarginUpdate = ({
+let emitFunction: ((payload: SpacingEmitPayload) => void) | null = null
+
+export const setEmitFunction = (emitFn: ((payload: SpacingEmitPayload) => void) | null) => {
+  emitFunction = emitFn
+}
+
+export const handleSpacingUpdate = ({
+  type,
   side,
   selectedOption,
   currentValue,
-}: {
-  side: BoxSide
-  selectedOption: { label: string; value: string }
-  currentValue: string
-}) => {
+}: UpdatePayload) => {
+  const targetRef = type === 'margin' ? margins : paddings
+  let changedValue: { [key: string]: string } = {}
+
   switch (selectedOption.value) {
     case '20px':
-      margins.value[side] = '20px'
+      targetRef.value[side] = '20px'
+      changedValue[side] = '20px'
       break
     case 'all':
-      const newValue = currentValue || margins.value[side]
-      margins.value.top = newValue
-      margins.value.bottom = newValue
-      margins.value.left = newValue
-      margins.value.right = newValue
+      const newValue = currentValue || targetRef.value[side]
+      targetRef.value.top = newValue
+      targetRef.value.bottom = newValue
+      targetRef.value.left = newValue
+      targetRef.value.right = newValue
+      changedValue = {
+        top: newValue,
+        bottom: newValue,
+        left: newValue,
+        right: newValue,
+      }
       break
     case 'autoCurrent':
-      margins.value[side] = 'auto'
+      targetRef.value[side] = 'auto'
+      changedValue[side] = 'auto'
       break
     case 'autoAll':
-      margins.value.top = 'auto'
-      margins.value.bottom = 'auto'
-      margins.value.left = 'auto'
-      margins.value.right = 'auto'
+      targetRef.value.top = 'auto'
+      targetRef.value.bottom = 'auto'
+      targetRef.value.left = 'auto'
+      targetRef.value.right = 'auto'
+      changedValue = {
+        top: 'auto',
+        bottom: 'auto',
+        left: 'auto',
+        right: 'auto',
+      }
       break
     case 'unsetCurrent':
-      margins.value[side] = ''
+      targetRef.value[side] = ''
+      changedValue[side] = ''
       break
     case 'unsetAll':
-      margins.value.top = ''
-      margins.value.bottom = ''
-      margins.value.left = ''
-      margins.value.right = ''
+      targetRef.value.top = ''
+      targetRef.value.bottom = ''
+      targetRef.value.left = ''
+      targetRef.value.right = ''
+      changedValue = {
+        top: '',
+        bottom: '',
+        left: '',
+        right: '',
+      }
+      break
+    default:
+      targetRef.value[side] = selectedOption.value
+      changedValue[side] = selectedOption.value
       break
   }
-}
 
-export const handlePaddingUpdate = () => {}
+  if (emitFunction) {
+    emitFunction({
+      changed: { [type]: changedValue },
+      value: { margin: { ...margins.value }, padding: { ...paddings.value } },
+    })
+  }
+}

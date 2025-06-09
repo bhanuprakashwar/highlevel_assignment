@@ -5,13 +5,23 @@
         <!-- Top Row -->
         <div></div>
         <div>
-          <SpacingDropdown :value="margins.top" side="top" @updateMargins="handleMarginUpdate" />
+          <SpacingDropdown
+            :value="margins.top"
+            side="top"
+            type="margin"
+            @updateSpacing="handleUpdate"
+          />
         </div>
         <div></div>
 
         <!-- Center Row -->
         <div>
-          <SpacingDropdown :value="margins.left" side="left" @updateMargins="handleMarginUpdate" />
+          <SpacingDropdown
+            :value="margins.left"
+            side="left"
+            type="margin"
+            @updateSpacing="handleUpdate"
+          />
         </div>
         <div class="padding-box">
           <div class="grid-3x3 padding-grid">
@@ -19,16 +29,32 @@
             <SpacingDropdown
               :value="paddings.top"
               side="top"
-              @updateMargins="handlePaddingUpdate"
+              type="padding"
+              @updateSpacing="handleUpdate"
             />
             <div></div>
 
-            <SpacingDropdown :value="paddings.left" side="left" />
+            <SpacingDropdown
+              :value="paddings.left"
+              side="left"
+              type="padding"
+              @updateSpacing="handleUpdate"
+            />
             <div class="input-wrapper"></div>
-            <SpacingDropdown :value="paddings.right" side="right" />
+            <SpacingDropdown
+              :value="paddings.right"
+              side="right"
+              type="padding"
+              @updateSpacing="handleUpdate"
+            />
 
             <div></div>
-            <SpacingDropdown :value="paddings.bottom" side="bottom" />
+            <SpacingDropdown
+              :value="paddings.bottom"
+              side="bottom"
+              type="padding"
+              @updateSpacing="handleUpdate"
+            />
             <div></div>
           </div>
           <div class="padding-label">Paddings</div>
@@ -37,7 +63,8 @@
           <SpacingDropdown
             :value="margins.right"
             side="right"
-            @updateMargins="handleMarginUpdate"
+            type="margin"
+            @updateSpacing="handleUpdate"
           />
         </div>
 
@@ -47,7 +74,8 @@
           <SpacingDropdown
             :value="margins.bottom"
             side="bottom"
-            @updateMargins="handleMarginUpdate"
+            type="margin"
+            @updateSpacing="handleUpdate"
           />
         </div>
         <div></div>
@@ -59,12 +87,23 @@
 
 <script setup lang="ts">
 import SpacingDropdown from './SpacingDropdown.vue'
-import {
-  margins,
-  paddings,
-  handleMarginUpdate,
-  handlePaddingUpdate,
-} from '../shared/spacingBusLogic'
+import { handleSpacingUpdate, margins, paddings, setEmitFunction } from '../shared/spacingBusLogic'
+import { onBeforeUnmount, onMounted } from 'vue'
+import type { UpdatePayload } from '@/shared/spacingTypes'
+
+const emit = defineEmits(['spacingDetails'])
+
+onMounted(() => {
+  setEmitFunction((payload) => emit('spacingDetails', payload))
+})
+
+onBeforeUnmount(() => {
+  setEmitFunction(null)
+})
+
+const handleUpdate = (payload: UpdatePayload) => {
+  handleSpacingUpdate(payload)
+}
 </script>
 
 <style scoped>
