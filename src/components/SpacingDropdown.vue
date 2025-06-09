@@ -2,6 +2,7 @@
   <div class="dropdown" ref="dropdownRef">
     <div class="dropdown-box">
       <input
+        ref="inputRef"
         class="dropdown-input"
         type="text"
         :placeholder="value ? '' : '0px'"
@@ -41,6 +42,7 @@ const props = defineProps({
 })
 const emit = defineEmits(['updateSpacing'])
 const dropdownRef = ref<HTMLElement | null>(null)
+const inputRef = ref<HTMLInputElement | null>(null)
 const show = ref(false)
 const inputValue = ref(props.value)
 const toggleDropdown = () => {
@@ -111,6 +113,7 @@ const handleManualInput = () => {
       currentValue: '',
     })
   }
+  inputRef.value?.blur()
 }
 
 watch(
