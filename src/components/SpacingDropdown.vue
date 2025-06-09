@@ -1,12 +1,12 @@
 <template>
   <div class="dropdown" ref="dropdownRef">
-    <label v-if="label" class="dropdown-label">{{ label }}</label>
     <div class="dropdown-box">
       <input
         class="dropdown-input"
         type="text"
-        :placeholder="label ? '' : '0px'"
-        :value="selected"
+        :placeholder="value ? '' : '0px'"
+        v-model="inputValue"
+        @keydown.enter.prevent="handleManualInput"
       />
       <font-awesome-icon icon="chevron-down" size="xs" class="chevron" @click="toggleDropdown" />
       <div v-if="show" class="dropdown-list">
@@ -24,15 +24,25 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from 'vue'
-defineProps({
-  label: {
+import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
+const props = defineProps({
+  value: {
     type: String,
+    default: '',
+  },
+  side: {
+    type: String,
+    required: true,
+  },
+  type: {
+    type: String,
+    required: true,
   },
 })
+const emit = defineEmits(['updateSpacing'])
 const dropdownRef = ref<HTMLElement | null>(null)
-const selected = ref('')
 const show = ref(false)
+const inputValue = ref(props.value)
 const toggleDropdown = () => {
   show.value = !show.value
 }
@@ -63,7 +73,12 @@ const options = [
   },
 ]
 const selectOption = (option: { label: string; value: string }) => {
-  selected.value = option.value
+  emit('updateSpacing', {
+    side: props.side,
+    type: props.type,
+    selectedOption: option,
+    currentValue: inputValue.value,
+  })
   show.value = false
 }
 const handleClickOutside = (event: MouseEvent) => {
@@ -71,6 +86,40 @@ const handleClickOutside = (event: MouseEvent) => {
     show.value = false
   }
 }
+
+function isValidCSSValue(property: string, value: string): boolean {
+  const el = document.createElement('div')
+  el.style[property as any] = value
+  return el.style[property as any] === value
+}
+const handleManualInput = () => {
+  const trimmed = inputValue.value.trim()
+  const cssProperty = props.type === 'margin' ? 'margin' : 'padding'
+  if (isValidCSSValue(cssProperty, trimmed)) {
+    emit('updateSpacing', {
+      side: props.side,
+      type: props.type,
+      selectedOption: { label: 'Manual input', value: trimmed },
+      currentValue: trimmed,
+    })
+  } else {
+    inputValue.value = ''
+    emit('updateSpacing', {
+      side: props.side,
+      type: props.type,
+      selectedOption: { label: 'Unset', value: 'unsetCurrent' },
+      currentValue: '',
+    })
+  }
+}
+
+watch(
+  () => props.value,
+  (newVal) => {
+    inputValue.value = newVal
+  },
+)
+
 onMounted(() => {
   document.addEventListener('click', handleClickOutside)
 })
