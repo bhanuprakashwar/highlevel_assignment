@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="width: 100%">
     <div class="outer-box">
       <div class="grid-3x3 margin-box">
         <!-- Top Row -->
@@ -112,15 +112,16 @@ const handleUpdate = (payload: UpdatePayload) => {
   background: #f8fafb;
   border: 1px solid #e2e5e6;
   border-radius: 5px;
-  width: 525px;
+  width: 100%;
   height: 205px;
   padding: 8px;
+  box-sizing: border-box;
 }
 
 .margin-box {
   display: grid;
-  grid-template-columns: repeat(3, auto);
-  grid-template-rows: repeat(3, auto);
+  grid-template-columns: auto 1fr auto;
+  grid-template-rows: auto 1fr auto;
   gap: 4px;
   align-items: center;
   justify-content: center;
@@ -131,17 +132,18 @@ const handleUpdate = (payload: UpdatePayload) => {
   background: #1a73e80d;
   border: 1px solid #1a73e8;
   border-radius: 5px;
-  width: 405px;
+  width: 100%;
   height: 135px;
   padding: 8px;
+  box-sizing: border-box;
 }
 
 .padding-grid {
   display: grid;
   height: 100%;
   width: 100%;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(3, 1fr);
+  grid-template-columns: auto 1fr auto;
+  grid-template-rows: auto 1fr auto;
   gap: 4px;
   align-items: center;
   justify-content: center;
@@ -160,7 +162,7 @@ const handleUpdate = (payload: UpdatePayload) => {
 }
 
 .input-wrapper {
-  width: 213px;
+  width: 100%;
   height: 40px;
   background: #ffffff;
   border: 1px solid #ffffff;
